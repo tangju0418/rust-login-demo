@@ -15,3 +15,7 @@ tower-http = { version = "0.6.6", features = ["fs"] }
 reqwest = { version = "0.12.20", default-features = false, features = ["json", "rustls-tls"] }
 thiserror = "2"
 dotenvy = "0.15"
+argon2 = "0.5"
+jsonwebtoken = "9"
+sha2 = "0.10"
+rand = "0.8"

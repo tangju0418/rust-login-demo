@@ -1,3 +1,5 @@
+mod app_state;
+mod auth;
 mod infra;
 mod rest;
 mod web;
@@ -7,7 +9,11 @@ use std::{env, net::SocketAddr, path::Path};
 use axum::serve;
 use tokio::net::TcpListener;
 
-use crate::infra::db::init_db;
+use crate::{
+    app_state::AppState,
+    auth::AuthConfig,
+    infra::db::{init_db, seed_demo_users},
+};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -23,14 +29,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         listen_addr, database_url
     );
 
-    let _db_pool = init_db(&database_url).await?;
-    let app = web::build_router();
+    let auth_config = AuthConfig::from_env()?;
+    let db_pool = init_db(&database_url).await?;
+    seed_demo_users(&db_pool, &auth_config.demo_user_initial_password).await?;
+    let app = web::build_router(AppState {
+        db_pool,
+        auth_config,
+    });
 
     let socket_addr: SocketAddr = listen_addr.parse()?;
     let listener = TcpListener::bind(socket_addr).await?;
     println!("[Main] startup_ready | listen_addr={}", listen_addr);
 
-    serve(listener, app).await?;
+    serve(
+        listener,
+        app.into_make_service_with_connect_info::<SocketAddr>(),
+    )
+    .await?;
     Ok(())
 }
 

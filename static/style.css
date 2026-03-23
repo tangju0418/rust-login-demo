@@ -16,10 +16,89 @@ body {
 }
 
 .panel {
-  min-height: 120px;
   background: #fff;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
-  padding: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+h1,
+h2 {
+  margin-top: 0;
+}
+
+.form-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.form-grid label {
+  display: grid;
+  gap: 6px;
+}
+
+input,
+button {
+  font: inherit;
+}
+
+input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+}
+
+button {
+  width: fit-content;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: #fff;
+  cursor: pointer;
+}
+
+button:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+.actions {
   margin-bottom: 12px;
+}
+
+.result {
+  margin: 0;
+  padding: 12px;
+  background: #111827;
+  color: #f9fafb;
+  border-radius: 6px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.session-grid {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+}
+
+.session-grid div {
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: #f8fafc;
+}
+
+.session-grid dt {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.session-grid dd {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
 }

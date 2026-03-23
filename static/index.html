@@ -3,15 +3,79 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rust Service Demo</title>
+    <title>Authentication Demo</title>
     <link rel="stylesheet" href="/static/style.css" />
   </head>
   <body>
     <main class="container">
-      <h1>Rust + Axum + SQLite Demo</h1>
-      <section id="info" class="panel">
+      <h1>认证与风控联调页面</h1>
+      <section class="panel">
+        <h2>服务状态</h2>
         <div id="health">health: checking...</div>
         <div id="echo-time">echo time: checking...</div>
+      </section>
+
+      <section class="panel">
+        <h2>登录</h2>
+        <form id="login-form" class="form-grid">
+          <label>
+            <span>邮箱</span>
+            <input id="login-email" name="email" type="email" autocomplete="username" />
+          </label>
+          <label>
+            <span>密码</span>
+            <input
+              id="login-password"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+            />
+          </label>
+          <button id="login-submit" type="submit">登录</button>
+        </form>
+        <pre id="login-result" class="result">等待登录...</pre>
+      </section>
+
+      <section class="panel">
+        <h2>刷新凭证</h2>
+        <div class="actions">
+          <button id="refresh-submit" type="button">刷新 refresh_token</button>
+        </div>
+        <pre id="refresh-result" class="result">等待刷新...</pre>
+      </section>
+
+      <section class="panel">
+        <h2>当前登录主体</h2>
+        <div class="actions">
+          <button id="current-user-submit" type="button">获取当前用户</button>
+        </div>
+        <pre id="current-user-result" class="result">等待查询...</pre>
+      </section>
+
+      <section class="panel">
+        <h2>当前会话信息</h2>
+        <dl class="session-grid">
+          <div>
+            <dt>access_token</dt>
+            <dd id="session-access-token">-</dd>
+          </div>
+          <div>
+            <dt>access_token_expires_in</dt>
+            <dd id="session-access-token-expires-in">-</dd>
+          </div>
+          <div>
+            <dt>refresh_token</dt>
+            <dd id="session-refresh-token">-</dd>
+          </div>
+          <div>
+            <dt>refresh_token_expires_in</dt>
+            <dd id="session-refresh-token-expires-in">-</dd>
+          </div>
+          <div>
+            <dt>最近一次失败结论</dt>
+            <dd id="session-last-error">-</dd>
+          </div>
+        </dl>
       </section>
     </main>
     <script src="/static/app.js"></script>
