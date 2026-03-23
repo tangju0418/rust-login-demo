@@ -7,77 +7,181 @@
     <link rel="stylesheet" href="/static/style.css" />
   </head>
   <body>
-    <main class="container">
-      <h1>认证与风控联调页面</h1>
-      <section class="panel">
-        <h2>服务状态</h2>
-        <div id="health">health: checking...</div>
-        <div id="echo-time">echo time: checking...</div>
-      </section>
-
-      <section class="panel">
-        <h2>登录</h2>
-        <form id="login-form" class="form-grid">
-          <label>
-            <span>邮箱</span>
-            <input id="login-email" name="email" type="email" autocomplete="username" />
-          </label>
-          <label>
-            <span>密码</span>
-            <input
-              id="login-password"
-              name="password"
-              type="password"
-              autocomplete="current-password"
-            />
-          </label>
-          <button id="login-submit" type="submit">登录</button>
-        </form>
-        <pre id="login-result" class="result">等待登录...</pre>
-      </section>
-
-      <section class="panel">
-        <h2>刷新凭证</h2>
-        <div class="actions">
-          <button id="refresh-submit" type="button">刷新 refresh_token</button>
+    <main class="page-shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Auth Demo Workspace</p>
+          <h1>认证与风控联调页面</h1>
+          <p class="hero-text">
+            用于验证登录、刷新、当前用户查询和暴力破解风控规则。页面只保留联调需要的信息, 结果区与会话区分离, 便于持续观察。
+          </p>
         </div>
-        <pre id="refresh-result" class="result">等待刷新...</pre>
-      </section>
-
-      <section class="panel">
-        <h2>当前登录主体</h2>
-        <div class="actions">
-          <button id="current-user-submit" type="button">获取当前用户</button>
+        <div class="hero-note">
+          <h2>演示测试账号</h2>
+          <ul class="plain-list">
+            <li><code>test1@brain.im</code></li>
+            <li><code>test2@brain.im</code></li>
+            <li>初始密码由运行环境提供, 页面不展示明文密码</li>
+          </ul>
         </div>
-        <pre id="current-user-result" class="result">等待查询...</pre>
       </section>
 
-      <section class="panel">
-        <h2>当前会话信息</h2>
-        <dl class="session-grid">
-          <div>
-            <dt>access_token</dt>
-            <dd id="session-access-token">-</dd>
-          </div>
-          <div>
-            <dt>access_token_expires_in</dt>
-            <dd id="session-access-token-expires-in">-</dd>
-          </div>
-          <div>
-            <dt>refresh_token</dt>
-            <dd id="session-refresh-token">-</dd>
-          </div>
-          <div>
-            <dt>refresh_token_expires_in</dt>
-            <dd id="session-refresh-token-expires-in">-</dd>
-          </div>
-          <div>
-            <dt>最近一次失败结论</dt>
-            <dd id="session-last-error">-</dd>
-          </div>
-        </dl>
+      <section class="status-grid">
+        <article class="status-card">
+          <span class="status-label">服务健康</span>
+          <strong id="health">checking...</strong>
+        </article>
+        <article class="status-card">
+          <span class="status-label">服务时间</span>
+          <strong id="echo-time">checking...</strong>
+        </article>
+        <article class="status-card">
+          <span class="status-label">当前请求 IP</span>
+          <strong id="request-context-ip">checking...</strong>
+        </article>
+        <article class="status-card">
+          <span class="status-label">当前 User-Agent</span>
+          <strong id="request-context-user-agent">checking...</strong>
+        </article>
+      </section>
+
+      <section class="layout-grid">
+        <div class="layout-column">
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="panel-eyebrow">Login</p>
+                <h2>登录</h2>
+              </div>
+              <span class="panel-badge">POST /login/create</span>
+            </div>
+            <form id="login-form" class="form-grid">
+              <label>
+                <span>邮箱</span>
+                <input id="login-email" name="email" type="email" autocomplete="username" placeholder="test1@brain.im" />
+              </label>
+              <label>
+                <span>密码</span>
+                <input
+                  id="login-password"
+                  name="password"
+                  type="password"
+                  autocomplete="current-password"
+                  placeholder="输入密码"
+                />
+              </label>
+              <button id="login-submit" type="submit">登录</button>
+            </form>
+            <pre id="login-result" class="result" data-state="idle">等待登录...</pre>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="panel-eyebrow">Risk Control</p>
+                <h2>暴力破解测试</h2>
+              </div>
+              <span class="panel-badge">不会覆盖当前会话</span>
+            </div>
+            <div class="helper-text">
+              使用错误密码触发失败计数与锁定规则。当前测试请求将由服务端识别为如下 IP:
+              <code id="risk-current-ip">checking...</code>
+            </div>
+            <form id="risk-form" class="form-grid form-grid-compact">
+              <label>
+                <span>测试邮箱</span>
+                <input id="risk-email" name="risk_email" type="email" autocomplete="off" placeholder="test1@brain.im" />
+              </label>
+              <label>
+                <span>错误密码</span>
+                <input id="risk-password" name="risk_password" type="password" autocomplete="off" placeholder="输入错误密码" />
+              </label>
+              <label>
+                <span>连续次数</span>
+                <input id="risk-attempt-count" name="risk_attempt_count" type="number" min="1" max="30" value="5" />
+              </label>
+              <div class="button-row">
+                <button id="risk-single-submit" type="button">单次错误登录</button>
+                <button id="risk-batch-submit" type="button" class="button-secondary">连续错误登录</button>
+              </div>
+            </form>
+            <div id="risk-result-list" class="attempt-list">
+              <div class="empty-state">等待执行暴力破解测试...</div>
+            </div>
+          </section>
+        </div>
+
+        <div class="layout-column">
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="panel-eyebrow">Refresh Token</p>
+                <h2>刷新凭证</h2>
+              </div>
+              <span class="panel-badge">PATCH /refresh_token/update</span>
+            </div>
+            <div class="token-preview-row">
+              <span>当前 refresh_token</span>
+              <code id="refresh-current-token">-</code>
+            </div>
+            <div class="actions">
+              <button id="refresh-submit" type="button">刷新 refresh_token</button>
+            </div>
+            <pre id="refresh-result" class="result" data-state="idle">等待刷新...</pre>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="panel-eyebrow">Current User</p>
+                <h2>当前登录主体</h2>
+              </div>
+              <span class="panel-badge">GET /current_user/get</span>
+            </div>
+            <div class="token-preview-row">
+              <span>当前 access_token</span>
+              <code id="current-access-token">-</code>
+            </div>
+            <div class="actions">
+              <button id="current-user-submit" type="button">获取当前用户</button>
+            </div>
+            <pre id="current-user-result" class="result" data-state="idle">等待查询...</pre>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="panel-eyebrow">Session</p>
+                <h2>当前会话信息</h2>
+              </div>
+              <span class="panel-badge">页面刷新后保留</span>
+            </div>
+            <dl class="session-grid">
+              <div>
+                <dt>access_token</dt>
+                <dd id="session-access-token">-</dd>
+              </div>
+              <div>
+                <dt>access_token_expires_in</dt>
+                <dd id="session-access-token-expires-in">-</dd>
+              </div>
+              <div>
+                <dt>refresh_token</dt>
+                <dd id="session-refresh-token">-</dd>
+              </div>
+              <div>
+                <dt>refresh_token_expires_in</dt>
+                <dd id="session-refresh-token-expires-in">-</dd>
+              </div>
+              <div>
+                <dt>最近一次失败结论</dt>
+                <dd id="session-last-error">-</dd>
+              </div>
+            </dl>
+          </section>
+        </div>
       </section>
     </main>
     <script src="/static/app.js"></script>
   </body>
-  </html>
+</html>

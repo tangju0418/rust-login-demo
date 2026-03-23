@@ -10,6 +10,7 @@ pub fn build_router(app_state: AppState) -> Router {
     Router::new()
         .route("/health/get", get(rest::health::get_health))
         .route("/echo/get", get(rest::echo::get_echo))
+        .route("/request_context/get", get(rest::request_context::get_request_context))
         .route("/login/create", post(rest::auth::create_login))
         .route("/refresh_token/update", patch(rest::auth::update_refresh_token))
         .route("/current_user/get", get(rest::auth::get_current_user))
